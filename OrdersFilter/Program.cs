@@ -2,7 +2,6 @@
 using OrdersFilter.Services;
 using OrdersFilter.Utils;
 using Microsoft.Extensions.Configuration;
-using System.Globalization;
 
 namespace OrdersFilter;
 
@@ -97,20 +96,7 @@ class Program
 
         try
         {
-            var filteredOrders = await orderService.FilterOrdersAsync(inputFilePath, criteria, logger);
-
-            var batchSize = 1000;
-            var batches = filteredOrders.Select((order, index) => new { order, index })
-                .GroupBy(x => x.index / batchSize)
-                .Select(g => g.Select(x =>
-                    $"{x.order.Number},{x.order.Weight.ToString(CultureInfo.InvariantCulture)},{x.order.CityDistrict},{x.order.DeliveryDateTime:yyyy-MM-dd HH:mm:ss}"));
-
-            foreach (var batch in batches)
-            {
-                await fileService.WriteLinesAsync(resultFilePath, batch);
-            }
-
-            await logger.LogAsync($"Результаты записаны в {resultFilePath}");
+            await orderService.FilterOrdersAsync(inputFilePath, resultFilePath, criteria, logger);
         }
         catch (Exception ex)
         {
