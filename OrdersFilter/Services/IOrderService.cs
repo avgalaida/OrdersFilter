@@ -4,5 +4,6 @@ namespace OrdersFilter.Services;
 
 public interface IOrderService
 {
-    Task<IEnumerable<Order>> FilterOrdersAsync(string inputFilePath, FilterCriteria criteria, ILoggingService logger);
+    Task FilterOrdersAsync(string inputFilePath, string outputFilePath, FilterCriteria criteria,
+        ILoggingService logger);
 }
