@@ -22,6 +22,13 @@
       <None Update="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Remove="OrdersFilter.Tests\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Remove="OrdersFilter.Tests\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Remove="OrdersFilter.Tests\**" />
     </ItemGroup>
 
 </Project>

@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <Exclude>[xunit.*]*</Exclude>
+    <ExcludeByAttribute>Obsolete</ExcludeByAttribute>
   </PropertyGroup>
   
   <ItemGroup>
