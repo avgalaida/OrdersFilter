@@ -4,3 +4,6 @@
 /OrdersFilter/bin
 .DS_Store
 /OrdersFilter/.idea
+/OrdersFilter.Tests/bin
+/OrdersFilter.Tests/obj
+/OrdersFilter.Tests/.idea

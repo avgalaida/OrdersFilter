@@ -11,52 +11,60 @@ public class OrderService : IOrderService
         _fileService = fileService;
     }
 
-    public async Task<IEnumerable<Order>> FilterOrdersAsync(string inputFilePath, FilterCriteria criteria,
+    public async Task FilterOrdersAsync(string inputFilePath, string outputFilePath, FilterCriteria criteria,
         ILoggingService logger)
     {
-        var filteredOrders = new List<Order>();
         DateTime endDateTime = criteria.GetEndDateTime();
+        int processedLines = 0;
+        int writtenOrders = 0;
+        int batchSize = 1000;
+        var batch = new List<string>(batchSize);
 
         try
         {
-            using (var stream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var reader = new StreamReader(stream))
+            await logger.LogAsync("Начало фильтрации заказов.");
+
+            await foreach (var line in _fileService.ReadLinesAsync(inputFilePath))
             {
-                string line;
-                int lineNumber = 0;
+                processedLines++;
 
-                while ((line = await reader.ReadLineAsync()) != null)
+                if (Order.TryParse(line, out Order? order, out string? error))
                 {
-                    lineNumber++;
-                    if (Order.TryParse(line, out Order order, out string error))
+                    if (order != null &&
+                        order.CityDistrict == criteria.CityDistrict &&
+                        order.DeliveryDateTime >= criteria.FirstDeliveryDateTime &&
+                        order.DeliveryDateTime <= endDateTime)
                     {
-                        if (order.CityDistrict == criteria.CityDistrict &&
-                            order.DeliveryDateTime >= criteria.FirstDeliveryDateTime &&
-                            order.DeliveryDateTime <= endDateTime)
-                        {
-                            filteredOrders.Add(order);
-                        }
+                        batch.Add(line);
+                        writtenOrders++;
                     }
-                    else
-                    {
-                        await logger.LogAsync($"Ошибка на строке {lineNumber}: {error}");
-                    }
+                }
+                else
+                {
+                    await logger.LogAsync($"Ошибка на строке {processedLines}: {error}");
+                }
 
-                    if (lineNumber % 100 == 0)
-                    {
-                        await logger.LogAsync($"{lineNumber} строк обработано.");
-                    }
+                if (batch.Count >= batchSize)
+                {
+                    await _fileService.WriteLinesAsync(outputFilePath, batch);
+                    batch.Clear();
+                    await logger.LogAsync($"{processedLines} строк обработано, {writtenOrders} заказов записано.");
                 }
             }
 
-            await logger.LogAsync("Фильтрация заказов завершена.");
+            if (batch.Count > 0)
+            {
+                await _fileService.WriteLinesAsync(outputFilePath, batch);
+                await logger.LogAsync($"{processedLines} строк обработано, {writtenOrders} заказов записано.");
+            }
+
+            await logger.LogAsync(
+                $"Фильтрация завершена. Обработано {processedLines} строк, записано {writtenOrders} заказов.");
         }
         catch (Exception ex)
         {
             await logger.LogAsync($"Ошибка при обработке файла: {ex.Message}");
             throw;
         }
-
-        return filteredOrders;
     }
 }
