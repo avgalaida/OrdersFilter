@@ -4,6 +4,9 @@
 /OrdersFilter/bin
 .DS_Store
 /OrdersFilter/.idea
+<<<<<<< HEAD
 /OrdersFilter.Tests/bin
 /OrdersFilter.Tests/obj
 /OrdersFilter.Tests/.idea
+=======
+>>>>>>> parent of 45bfbed (Update .gitignore)
