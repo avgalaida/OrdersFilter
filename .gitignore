@@ -2,3 +2,5 @@
 /OrdersFilter/obj
 /.idea
 /OrdersFilter/bin
+.DS_Store
+/OrdersFilter/.idea
