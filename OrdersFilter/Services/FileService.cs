@@ -2,29 +2,22 @@ namespace OrdersFilter.Services;
 
 public class FileService : IFileService
 {
-    public async Task<IEnumerable<string>> ReadLinesAsync(string filePath)
+    public async IAsyncEnumerable<string> ReadLinesAsync(string filePath)
     {
-        var lines = new List<string>();
-        using (var reader = new StreamReader(filePath))
+        using var reader = new StreamReader(filePath);
+        string? line;
+        while ((line = await reader.ReadLineAsync()) != null)
         {
-            string line;
-            while ((line = await reader.ReadLineAsync()) != null)
-            {
-                lines.Add(line);
-            }
+            yield return line;
         }
-
-        return lines;
     }
 
     public async Task WriteLinesAsync(string filePath, IEnumerable<string> lines)
     {
-        using (var writer = new StreamWriter(filePath, append: true))
+        using var writer = new StreamWriter(filePath, append: true);
+        foreach (var line in lines)
         {
-            foreach (var line in lines)
-            {
-                await writer.WriteLineAsync(line);
-            }
+            await writer.WriteLineAsync(line);
         }
     }
 }
