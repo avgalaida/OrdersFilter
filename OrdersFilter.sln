@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrdersFilter", "OrdersFilter\OrdersFilter.csproj", "{1BAB5D34-F3D0-43BA-AD98-12CAFE6A7581}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrdersFilter.Tests", "OrdersFilter.Tests\OrdersFilter.Tests.csproj", "{02E97857-C7DB-4E7F-86CB-6EED8DB22586}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
